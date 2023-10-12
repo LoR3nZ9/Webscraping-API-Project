@@ -1,5 +1,3 @@
-// Background script
-
 chrome.runtime.onMessage.addListener(async function(request, sender, sendResponse) {
     if (request.action === 'scrape') {
       const tab = await chrome.scripting.executeScript({
@@ -11,8 +9,7 @@ chrome.runtime.onMessage.addListener(async function(request, sender, sendRespons
   });
   
   function scrapeData() {
-    // Implement your web scraping logic here and return the scraped data
-    // Example:
+ 
     const title = document.title;
     const description = document.querySelector('meta[name="description"]').content;
     const href = window.location.href;

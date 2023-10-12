@@ -1,10 +1,10 @@
 const express = require('express');
 const app = express();
 const port = 3000;
+
 const puppeteer = require('puppeteer');
 const sentiment = require('sentiment-analysis');
 
-// Function to categorize sentiment
 function categorizeSentiment(score) {
   if (score > 0) {
     return 'positive';
@@ -15,15 +15,14 @@ function categorizeSentiment(score) {
   }
 }
 
-// Function to count words in a text
 function countWords(text) {
   return text.split(/\s+/).filter(word => word).length;
 }
 
-async function yourScrapingAndAnalysisFunction() {
+async function scrapeDataFromUrl(url) {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
-  await page.goto('https://wsa-test.vercel.app'); // Replace with the URL you want to scrape.
+  await page.goto(url);
 
   const scrapedData = [];
 
@@ -70,35 +69,13 @@ async function yourScrapingAndAnalysisFunction() {
   return scrapedData;
 }
 
-// Create an endpoint for the front-end to fetch data
 app.get('/scrape', async (req, res) => {
   try {
-    // Your logic to scrape and analyze data
-    const scrapedData = await yourScrapingAndAnalysisFunction();
+    const url = 'https://wsa-test.vercel.app'; 
+    const scrapedData = await scrapeDataFromUrl(url);
     res.json(scrapedData);
   } catch (error) {
     res.status(500).json({ error: 'An error occurred while scraping and analyzing data.' });
-  }
-});
-
-// New endpoint for sentiment analysis
-app.get('/sentiment-analysis', async (req, res) => {
-  try {
-    const text = req.query.text;
-
-    // Perform sentiment analysis on the provided text
-    const sentimentAnalysis = sentiment(text);
-
-    // Categorize sentiment as before
-    const sentimentCategory = categorizeSentiment(sentimentAnalysis.score);
-
-    // Return the sentiment analysis result
-    res.json({
-      sentiment: sentimentCategory,
-      score: sentimentAnalysis.score,
-    });
-  } catch (error) {
-    res.status(500).json({ error: 'An error occurred while performing sentiment analysis.' });
   }
 });
 
